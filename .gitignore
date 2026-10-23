@@ -1,0 +1,23 @@
+# Python 缓存
+__pycache__/
+*.py[cod]
+*.so
+
+# IDE 配置
+.idea/
+.vscode/
+
+# 虚拟环境
+venv/
+env/
+
+# 环境变量文件（防 Key 泄露）
+.env
+
+# 本项目专属垃圾（千万别传）
+chroma_db/
+chat_history/
+
+# 系统文件
+.DS_Store
+Thumbs.db
