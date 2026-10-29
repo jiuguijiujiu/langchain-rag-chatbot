@@ -10,9 +10,9 @@ from file_store_history import get_history
 
 # 输出提示词
 def print_prompt(prompt):
-    print('=' * 50)
+    print('=' * 100)
     print(prompt.to_string())
-    print('=' * 50)
+    print('=' * 100)
     return prompt
 
 # Rag
@@ -55,10 +55,10 @@ class RagService:
         )
 
         new_chain = RunnableWithMessageHistory(
-            runnable=chain,
-            get_session_history=get_history,
-            input_messages_key='input',
-            history_messages_key='history'
+            runnable = chain,
+            get_session_history = get_history,
+            input_messages_key = 'input',
+            history_messages_key = 'history'
         )
 
         return new_chain

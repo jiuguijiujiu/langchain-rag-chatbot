@@ -56,5 +56,13 @@ streamlit run qa_app.py
 ```
 在聊天框中进行提问，体验 RAG 问答与流式输出。
 
+## 🗺️ 系统架构图 (Architecture Design)
+### 1. 离线模块
+![RAG离线模块架构图](images/rag_offline_map.png)
+
+### 2. 在线模块
+![RAG在线模块架构图](images/rag_online_map.png)
+
 ## 🔧 待优化项 (Future Work)
 *   [ ] 引入 FastAPI 重构后端，实现前后端分离。
+

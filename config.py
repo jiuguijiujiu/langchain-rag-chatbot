@@ -1,3 +1,6 @@
+# uploader
+file_type = ['txt']
+
 # md5
 md5_path = './offline/md5.txt'
 

@@ -5,6 +5,7 @@ from langchain_core.messages import BaseMessage, messages_to_dict, messages_from
 import json
 import config
 
+# 根据会话id，来获取FileChatMessageHistory对象
 def get_history(session_id):
     return FileChatMessageHistory(session_id, storage_path=config.history_path)
 
@@ -13,21 +14,22 @@ class FileChatMessageHistory(BaseChatMessageHistory):
         self.session_id = session_id
         self.storage_path = storage_path
         self.file_path = os.path.join(self.storage_path, self.session_id)
-        os.makedirs(os.path.dirname(self.file_path), exist_ok=True)
+        os.makedirs(name=os.path.dirname(p=self.file_path), exist_ok=True)
 
     def add_messages(self, messages:Sequence[BaseMessage]):
         all_messages = list(self.messages)
         all_messages.extend(messages)
-        new_messages = messages_to_dict(all_messages)
+        list_dict = messages_to_dict(all_messages)
         with open(file=self.file_path, mode='w', encoding='utf-8') as f:
-            json.dump(obj=new_messages, fp=f, ensure_ascii=False)
+            json.dump(obj=list_dict, fp=f, ensure_ascii=False)
 
     @property
     def messages(self)->list[BaseMessage]:
         try:
             with open(file=self.file_path, mode='r', encoding='utf-8') as f:
-                messages = json.load(fp=f)
-                return messages_from_dict(messages)
+                list_dict = json.load(fp=f)
+                list_message = messages_from_dict(list_dict)
+                return list_message
         except FileNotFoundError:
             return []
 

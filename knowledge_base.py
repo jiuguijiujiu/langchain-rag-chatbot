@@ -8,25 +8,26 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from datetime import datetime
 
 # 文本内容:str 转为 md5:str
-def str_to_md5(text:str)->str:
-    str_bytes = text.encode(encoding='utf-8')
+def text_to_md5(text:str)->str:
+    text_bytes = text.encode(encoding='utf-8')
 
-    md5 = hashlib.md5()
-    md5.update(str_bytes)
-    bytes_md5 = md5.hexdigest()
+    md5_obj = hashlib.md5()
+    md5_obj.update(text_bytes)
+    md5 = md5_obj.hexdigest()
 
-    return bytes_md5
+    return md5
 
 # 检测md5是否重复
 def check_md5(md5:str)->bool:
+    os.makedirs(name=os.path.dirname(config.md5_path), exist_ok=True)
+
     if not os.path.exists(path=config.md5_path):
         open(file=config.md5_path, mode='w', encoding='utf-8').close()
         return False
 
     with open(file=config.md5_path, mode='r', encoding='utf-8') as f:
         for line in f:
-            line = line.strip()
-            if line == md5:
+            if line.strip() == md5:
                 return True
 
     return False
@@ -38,9 +39,8 @@ def save_md5(md5:str):
 
 # 知识库类
 class KnowledgeBase:
-    os.makedirs(name=config.chroma_path, exist_ok=True)
-
     def __init__(self):
+        os.makedirs(name=config.chroma_path, exist_ok=True)
         self.chroma = Chroma(
             collection_name=config.chroma_name,
             embedding_function=DashScopeEmbeddings(model=config.chroma_embedding_model),
@@ -52,25 +52,24 @@ class KnowledgeBase:
             chunk_overlap=config.chunk_overlap,
             separators=config.separators,
             length_function=len
-
         )
 
     # 存储知识
-    def store_knowledge(self, text:str, file_name:str):
-        md5 = str_to_md5(text=text)
+    def store_knowledge(self, file_text:str, file_name:str):
+        md5 = text_to_md5(text=file_text)
 
         if check_md5(md5=md5):
             return f"[跳过]：文件{file_name}内容已存在知识库中"
 
-        if len(text) > config.max_split_len:
-            text_chunks:list[str] = self.splitter.split_text(text=text)
+        if len(file_text) > config.max_split_len:
+            text_chunks:list[str] = self.splitter.split_text(text=file_text)
         else:
-            text_chunks = [text]
+            text_chunks = [file_text]
 
         metadata={
-            'source':file_name,
-            'create_time':datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'operator':'小许'
+            'source': file_name,
+            'create_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'operator': '小许'
         }
         self.chroma.add_texts(
             texts=text_chunks,
